@@ -1,0 +1,110 @@
+ [ETHERCHANNEL]
+enable
+
+configure terminal
+
+interface range fa0/x-x
+
+
+ 
+
+
+channel-group x mode on
+
+exit
+
+interface port-channel x
+
+switchport trunk encapsulation dot1q
+
+switchport mode trunk
+
+[VLANS | SWITCH3 GAUCHE]
+enable
+configure terminal
+interface vlan A
+ip address x.x.x.x+2 x.x.x.x
+standby A ip x.x.x.x+1
+standby A priority 100
+
+[VLANS | SWITCH3 DROITE]
+enable
+configure terminal
+interface vlan A
+ip address x.x.x.x+3 x.x.x.x
+standby A ip x.x.x.x+1
+standby A priority 99
+
+[VTP SERVER]
+enable
+configure terminal
+vtp mode server
+vtp domain x
+vtp password x
+vtp version 2
+
+[VTP CLIENT]
+enable
+configure terminal
+vtp mode server
+vtp domain x
+vtp password x
+vtp version 2
+vtp mode client
+
+[PORT SECURITY]
+enable
+configure terminal
+interfance range fa0/3-4
+switchport port-security
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation protect
+
+[PASSWORD ENABLE]
+enable
+configure terminal
+enable secret zeta
+
+
+[ACTIVER SSH | 5 Étapes]
+1/ Créer compte utilisateur :
+enable
+configure terminal
+username Vergis password vergis!
+
+2/ Définir un hostname :
+enable
+configure terminal
+hostname RouterSite2
+
+3/ Définir nom de domaine pour génener la clé de chiffrement :
+enable
+configure terminal
+ip domain-name vergis.corp
+
+4/ Génerer la clé de chiffrement :
+enable
+configure terminal
+crypto key generate rsa general-keys modulus 1024
+
+5/ Activer SSH
+enable
+configure terminal
+line vty 0 4
+transport input ssh
+login local
+exit
+
+[SSH CLIENT]
+enable
+configure terminal
+interface vlan 98
+ip address 192.168.5.x 255.255.255.
+ip default-gateway 192.168.5.1
+
+[SSH CONNEXION]
+ip config
+ping [ip de l'équipement]
+ssh -login Vergis [ip de l'équipement]
+password
